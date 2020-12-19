@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textview_day_of_the_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_small"
+        android:textStyle="bold"
+        android:layout_margin="@dimen/margin_small"
+        android:textColor="@color/white"
+        android:fontFamily="@font/alice">
+    </TextView>
+    <TextView
+        android:id="@+id/textview_day_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="@dimen/text_size_average"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:fontFamily="@font/alice">
+
+    </TextView>
+    <ImageView
+        android:id="@+id/image_view_for_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/image"
+        android:layout_gravity="center">
+
+    </ImageView>
+
+</LinearLayout>

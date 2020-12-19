@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/green"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="@android:color/holo_red_dark" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email_sending"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditTextSubject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_subject"
+            android:textColor="@color/black"
+            android:layout_margin="@dimen/margin_small"
+            android:inputType="textEmailSubject" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:textColor="@color/black"
+            android:hint="@string/write"
+            android:inputType="textWebEmailAddress" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageButton
+        android:id="@+id/button_send"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="@string/send"
+        android:layout_gravity="center"
+        android:background="@android:drawable/ic_dialog_email"
+        android:layout_margin="@dimen/margin_small"/>
+
+
+</LinearLayout>

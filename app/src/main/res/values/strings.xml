@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">GBWeatherApp</string>
+    <string name="enter_city">Выберите город</string>
+    <string name="nav_header_title">Войдите в систему</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="write_letter">Оставить отзыв</string>
+    <string name="about_app">Справка</string>
+    <string name="settings">настройки</string>
+    <string name="sign_in">Войти</string>
+    <string name="invalid_username">Неверное имя</string>
+    <string name="invalid_password">Пароль введен неверно</string>
+    <string name="login_failed">"Введены невыерные данные. Попробуйте еще раз."</string>
+    <string name="enter_subject">Укажите тему письма</string>
+    <string name="write">Напишите письмо</string>
+    <string name="send">Отправить</string>
+    <string name="prompt_name">Введите имя</string>
+    <string name="hint_name">минимум 2 символа, строчные латинские</string>
+    <string name="hint_password">минимум 6 символов, строчные буквы, цифра</string>
+    <string name="prompt_password">Введите пароль</string>
+    <string name="interface_error">Не имплементирован интерфейс %s</string>
+    <string name="Welcome">Добро пожаловать, %s</string>
+    <string name="window_speed">Ветер</string>
+    <string name="air_pressure">Давление</string>
+    <string name="addingToFavourite">Добавить в избранное</string>
+    <string name="image">изображение погоды</string>
+    <string name="data">Дата</string>
+    <string name="city">Город</string>
+    <string name="snackbar_message_add">"Город добавлен в избранное: %s"</string>
+    <string name="snackbar_message_delete">Город удален из избранного: %s</string>
+    <string name="show_button">Поиск</string>
+    <string name="addToFavourites">Избранное</string>
+    <string name="button_ok">OK</string>
+    <string name="error">Ошибка</string>
+    <string name="city_error">Произошла ошибка. Вы будете перенаправлены на главную страницу.</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/root_liner_for_weather_description"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".WeatherDescription"
+    android:background="@color/orange_dark">
+
+    <FrameLayout
+        android:id="@+id/frame_for_current_weather_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="@dimen/common_margin"
+        android:background="@color/green"
+        android:id="@+id/recycleView_for_week_weather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>
