@@ -66,14 +66,44 @@
             </com.google.android.material.button.MaterialButton>
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <FrameLayout
-            android:id="@+id/frame_for_favourites_fragment"
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/frame_for_favourites"
             android:layout_width="match_parent"
+            android:layout_margin="@dimen/common_margin"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/common_margin">
+            android:orientation="vertical"
+            android:background="@drawable/krug_ugly">
 
-        </FrameLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addToFavourites"
+                style="@style/my_text"
+                android:textSize="@dimen/text_size_small"
+                android:textAlignment="center"/>
+
+                <ImageView
+                    android:id="@+id/image_delete_all"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="end"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_baseline_delete_24"
+                    android:background="@drawable/circle"
+                    />
+
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycleView_for_favourites_city"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </LinearLayout>
 
 
     </LinearLayout>

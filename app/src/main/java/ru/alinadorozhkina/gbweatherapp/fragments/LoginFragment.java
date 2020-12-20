@@ -30,8 +30,7 @@ public class LoginFragment extends DialogFragment {
     Pattern checkPassword = Pattern.compile("^(?=^.{6,}$)(?=.*\\d)(?=.*[a-z])(?!.*\\s).*$");
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
         Dialog dialog = getDialog();
         if (dialog != null)

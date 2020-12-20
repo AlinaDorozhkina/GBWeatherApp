@@ -8,9 +8,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
-import android.content.Intent;
+import androidx.appcompat.widget.Toolbar;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,39 +26,34 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.alinadorozhkina.gbweatherapp.adapters.WeekTempAdapter;
 import ru.alinadorozhkina.gbweatherapp.current.weather.entities.WeatherRequest;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.Favourites;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.FavouritesDao;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.FavouritesDataBase;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.FavouritesViewModel;
+
 import ru.alinadorozhkina.gbweatherapp.fragments.CurrentWeatherFragment;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 import ru.alinadorozhkina.gbweatherapp.interfaces.OpenWeather;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.FavouriteCity;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
 
-public class WeatherDescription extends AppCompatActivity implements CurrentWeatherFragment.OnCurrentWeatherFragmentDataListener {
+public class WeatherDescription extends AppCompatActivity  {
 
     public static final String BROADCAST_ACTION_FINISHED = "service get result";
     private static final String TAG = WeatherDescription.class.getSimpleName();
     private String city;
-    private FavouriteCity favouriteCity;
     private CurrentWeather currentWeather;
     private OpenWeather openWeather;
-    private FavouritesViewModel viewModel;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_description);
-        viewModel=new ViewModelProvider(this).get(FavouritesViewModel.class);
         if (getIntent().hasExtra(Keys.CITY)) {
             city = getIntent().getStringExtra(Keys.CITY);
+            sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
+            saveCity(city);
             Log.v(TAG, " получен интент " + city);
         }
         initRetrofit();
         requestRetrofit(city, "ru", "metric", BuildConfig.WEATHER_API_KEY);
-
 
 // использовала до Retrofit
 //        URL url = NetworkUtils.buildURL(city);
@@ -116,8 +114,8 @@ public class WeatherDescription extends AppCompatActivity implements CurrentWeat
 
             }
         });
-
     }
+
     private ArrayList<WeekWeather> getWeekWeather(Response<WeatherRequest> response){
         String data1 = "";
         ArrayList<WeekWeather> weekWeathersList = new ArrayList<>();
@@ -162,32 +160,15 @@ public class WeatherDescription extends AppCompatActivity implements CurrentWeat
         return weekTempAdapter;
     }
 
-    @Override
-    public void sendCityAndTemp(String city, String temp, String data) {
-        //favouriteCity = new FavouriteCity(city, temp, data);
-        Favourites favourites=new Favourites(city, temp, data);
-        viewModel.insertFavourites(favourites);
-        //favouritesSource.addFavourites(favourites);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (favouriteCity != null) {
-            Intent intentResult = new Intent(WeatherDescription.this, MainActivity.class);
-            intentResult.putExtra(Keys.FAVOURITES, favouriteCity);
-            Log.v(TAG, "передано " + favouriteCity.toString());
-            finish();
-        }
-        super.onBackPressed();
-    }
-    private void removeCityFromFavourites (int id){
-
-
+    private void saveCity(String city){
+        sharedPreferences=this.getSharedPreferences("shared_last_city", MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(Keys.SAVE_CITY, city);
+        editor.apply();
     }
 
 
-
-//    @Override
+    //    @Override
 //    protected void onStart() {
 //        super.onStart();
 //        registerReceiver(JsonResultReceiver, new IntentFilter(BROADCAST_ACTION_FINISHED));
@@ -216,6 +197,4 @@ public class WeatherDescription extends AppCompatActivity implements CurrentWeat
 //        super.onStop();
 //        unregisterReceiver(JsonResultReceiver);
 //   }
-
-
 }

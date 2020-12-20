@@ -1,6 +1,5 @@
 package ru.alinadorozhkina.gbweatherapp.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -10,28 +9,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.R;
 import ru.alinadorozhkina.gbweatherapp.WeatherDescription;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.Favourites;
-
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.FavouriteCity;
+
 
 public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.FavouritesViewHolder> {
     private final String TAG = FavouritesAdapter.class.getSimpleName();
     List<Favourites> favouritesList;
-   // private ArrayList<Favourites> cities;
-    private Activity activity;
-    //private FavouritesSource favouritesSource;
+    private Context context;
 
-    public FavouritesAdapter(ArrayList<Favourites> favourites) {
-        this.favouritesList = favourites;
+    public FavouritesAdapter(Context context) {
+        this.context = context;
+        favouritesList = new ArrayList<>();
     }
 
     @NonNull
@@ -43,28 +39,20 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Fa
 
     @Override
     public void onBindViewHolder(@NonNull FavouritesViewHolder holder, final int position) {
-        Favourites favourites=favouritesList.get(position);
+        Favourites favourites = favouritesList.get(position);
         holder.textView_favourite_city.setText(favourites.getCityName());
         holder.textView_favourite_city_temp.setText(favourites.getTemperature());
         holder.textView_favourite_city_data.setText(favourites.getData());
-//        favouritesList=favouritesSource.getFavouritesList();
-//        Favourites favourites=favouritesList.;
-//        holder.textView_favourite_city.setText(favourites.getCityName());
-//        Log.v(TAG, " установка значений" + favourites.getCityName());
-//        holder.textView_favourite_city_temp.setText(favourites.getTemperature());
-//        Log.v(TAG, " установка значений" + favourites.getTemperature());
-//        holder.textView_favourite_city_data.setText(favourites.getData());
     }
 
     @Override
     public int getItemCount() {
-        Log.v(TAG, " getItemCount() " +favouritesList.size());
+        Log.v(TAG, " getItemCount() " + favouritesList.size());
         return favouritesList.size();
-
-       // return cities.size();
     }
+
     public void setFavourites(List<Favourites> favourites) {
-        Log.v(TAG, " setFavourites " +favourites.size());
+        Log.v(TAG, " setFavourites " + favourites.size());
         this.favouritesList = favourites;
         notifyDataSetChanged();
     }
@@ -86,9 +74,9 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Fa
         public void onClick(View v) {
             int position = getAdapterPosition();
             String value = favouritesList.get(position).getCityName();
-            Intent intent = new Intent (activity, WeatherDescription.class);
-            intent.putExtra(Keys.CITY, value );
-            activity.startActivity(intent);
+            Intent intent = new Intent(context, WeatherDescription.class);
+            intent.putExtra(Keys.CITY, value);
+            context.startActivity(intent);
         }
     }
 }

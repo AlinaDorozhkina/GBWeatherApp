@@ -1,4 +1,4 @@
-package ru.alinadorozhkina.gbweatherapp.data.base.favourites;
+package ru.alinadorozhkina.gbweatherapp.DB;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

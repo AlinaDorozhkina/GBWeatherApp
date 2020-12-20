@@ -1,4 +1,4 @@
-package ru.alinadorozhkina.gbweatherapp.utils;
+package ru.alinadorozhkina.gbweatherapp.service;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -21,6 +21,7 @@ import ru.alinadorozhkina.gbweatherapp.current.weather.entities.WeatherRequest;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
+import ru.alinadorozhkina.gbweatherapp.utils.JSONUtils;
 
 public class MyIntentService extends IntentService {
 
