@@ -8,9 +8,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
-import android.content.Intent;
+import androidx.appcompat.widget.Toolbar;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +24,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.adapters.WeekTempAdapter;
 import ru.alinadorozhkina.gbweatherapp.current.weather.entities.WeatherRequest;
 
@@ -38,21 +40,20 @@ public class WeatherDescription extends AppCompatActivity  {
     private String city;
     private CurrentWeather currentWeather;
     private OpenWeather openWeather;
-    private boolean flag;
-
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_description);
-        //viewModel=new ViewModelProvider(this).get(FavouritesViewModel.class);
         if (getIntent().hasExtra(Keys.CITY)) {
             city = getIntent().getStringExtra(Keys.CITY);
+            sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
+            saveCity(city);
             Log.v(TAG, " получен интент " + city);
         }
         initRetrofit();
         requestRetrofit(city, "ru", "metric", BuildConfig.WEATHER_API_KEY);
-
 
 // использовала до Retrofit
 //        URL url = NetworkUtils.buildURL(city);
@@ -92,7 +93,6 @@ public class WeatherDescription extends AppCompatActivity  {
                     CurrentWeatherFragment currentWeatherFragment = CurrentWeatherFragment.init(currentWeather);
                     currentWeatherFragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.frame_for_current_weather_fragment, currentWeatherFragment).commit();
-                   // initRecycleView(getWeekWeather(response));
                 }
             }
 
@@ -114,8 +114,8 @@ public class WeatherDescription extends AppCompatActivity  {
 
             }
         });
-
     }
+
     private ArrayList<WeekWeather> getWeekWeather(Response<WeatherRequest> response){
         String data1 = "";
         ArrayList<WeekWeather> weekWeathersList = new ArrayList<>();
@@ -160,7 +160,15 @@ public class WeatherDescription extends AppCompatActivity  {
         return weekTempAdapter;
     }
 
-//    @Override
+    private void saveCity(String city){
+        sharedPreferences=this.getSharedPreferences("shared_last_city", MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(Keys.SAVE_CITY, city);
+        editor.apply();
+    }
+
+
+    //    @Override
 //    protected void onStart() {
 //        super.onStart();
 //        registerReceiver(JsonResultReceiver, new IntentFilter(BROADCAST_ACTION_FINISHED));
@@ -189,6 +197,4 @@ public class WeatherDescription extends AppCompatActivity  {
 //        super.onStop();
 //        unregisterReceiver(JsonResultReceiver);
 //   }
-
-
 }

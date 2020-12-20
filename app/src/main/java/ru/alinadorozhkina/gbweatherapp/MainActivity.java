@@ -1,14 +1,12 @@
 package ru.alinadorozhkina.gbweatherapp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +45,7 @@ import java.util.List;
 import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
 import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.adapters.FavouritesAdapter;
+import ru.alinadorozhkina.gbweatherapp.current.weather.entities.WeatherRequest;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentAboutApp;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentSendingEmail;
 import ru.alinadorozhkina.gbweatherapp.fragments.LoginFragment;
@@ -55,12 +55,14 @@ import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginFragmentDataListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private final int REQUEST_CODE = 1;
     private LoginFragment loginFragment;
     private MaterialAutoCompleteTextView textInput_enter_city;
     private FavouritesAdapter favouritesAdapter;
     private RecyclerView recyclerView;
     private FavViewModel viewModel;
     private ImageView image_delete_all;
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -76,6 +78,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initView() {
+        sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
+        if (sharedPreferences!=null){
+            String city = sharedPreferences.getString(Keys.SAVE_CITY, null);
+            if (city!=null){
+                Intent intent = new Intent(this, WeatherDescription.class);
+                intent.putExtra(Keys.CITY, city);
+                startActivity(intent);
+            }
+        }
         recyclerView = findViewById(R.id.recycleView_for_favourites_city);
         textInput_enter_city = findViewById(R.id.textInput_enter_city);
         image_delete_all = findViewById(R.id.image_delete_all);
@@ -151,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.write_to_developer:
                 FragmentSendingEmail fragment_email = new FragmentSendingEmail();
                 fragment_email.show(getSupportFragmentManager(), "fragment");
-                //getSupportFragmentManager().beginTransaction().replace(R.id.frame_for_extra, fragment_email).addToBackStack(null).commit();
                 break;
             case R.id.about_app:
                 FragmentAboutApp fragmentAboutApp = new FragmentAboutApp();
@@ -172,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-
         switch (id) {
             case R.id.settings1:
 //                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
