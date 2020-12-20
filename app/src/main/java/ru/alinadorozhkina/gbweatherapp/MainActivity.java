@@ -1,15 +1,18 @@
 package ru.alinadorozhkina.gbweatherapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -40,40 +43,48 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.Favourites;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.FavouritesDataBase;
-import ru.alinadorozhkina.gbweatherapp.fragments.FavouritesFragment;
+import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
+import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
+import ru.alinadorozhkina.gbweatherapp.adapters.FavouritesAdapter;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentAboutApp;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentSendingEmail;
 import ru.alinadorozhkina.gbweatherapp.fragments.LoginFragment;
 import ru.alinadorozhkina.gbweatherapp.helper.AllCity;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
-import ru.alinadorozhkina.gbweatherapp.data.base.favourites.FavouriteCity;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginFragmentDataListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private LoginFragment loginFragment;
-    private FavouritesFragment fragment;
     private MaterialAutoCompleteTextView textInput_enter_city;
-   // private FavouritesDataBase dataBase;
-    private ArrayList<Favourites> favourites= new ArrayList<>();
+    private FavouritesAdapter favouritesAdapter;
+    private RecyclerView recyclerView;
+    private FavViewModel viewModel;
+    private ImageView image_delete_all;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       // dataBase = FavouritesDataBase.createDB();
         initView();
-        JsonFileReader reader = new JsonFileReader(this);
-        reader.execute("city.list.json");
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
-        //getData();
-        prepareFavourites();
+        initAutoCompleteText();
+        initRecycleView();
+        initViewModel();
     }
 
-    private void initView(){
+    private void initView() {
+        recyclerView = findViewById(R.id.recycleView_for_favourites_city);
         textInput_enter_city = findViewById(R.id.textInput_enter_city);
+        image_delete_all = findViewById(R.id.image_delete_all);
+        image_delete_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.deleteAll();
+            }
+        });
         Button button_show = findViewById(R.id.button_show);
         button_show.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +103,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    private void initRecycleView() {
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        favouritesAdapter = new FavouritesAdapter(this);
+        recyclerView.setAdapter(favouritesAdapter);
+    }
+
+    private void initAutoCompleteText() {
+        JsonFileReader reader = new JsonFileReader(this);
+        reader.execute("city.list.json");
+    }
+
     private Toolbar initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,6 +129,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void initViewModel() {
+        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication()).create(FavViewModel.class);
+        viewModel.getAllFavourites().observe(this, new Observer<List<Favourites>>() {
+            @Override
+            public void onChanged(List<Favourites> favourites) {
+                if (favourites != null) {
+                    favouritesAdapter.setFavourites(favourites);
+                }
+            }
+        });
     }
 
     @Override
@@ -168,32 +204,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         header_instruction.setText(getString(R.string.Welcome, name));
     }
 
-    private void prepareFavourites() {
-        FragmentManager manager = getSupportFragmentManager();
-        FavouritesFragment fragment = new FavouritesFragment();
-        manager.beginTransaction().add(R.id.frame_for_favourites_fragment, fragment).commit();
-    }
-//        fragment = (FavouritesFragment) manager.findFragmentById(R.id.fragment_for_favourites);
-//        if (fragment != null) {
-//
-//            fragment.initRecycleView();
-//        }
-//    }
-//    private void getData () {
-//        LiveData<List<Favourites>> favouritesFromDB = dataBase.getFavouritesDao().getAll();
-//        Log.v(TAG, " getData"+ favouritesFromDB.toString());
-//        favouritesFromDB.observe(this, new Observer<List<Favourites>>() {
-//            @Override
-//            public void onChanged(List<Favourites> favouritesFromLiveData) {
-//                favourites.clear();
-//                favourites.addAll(favouritesFromLiveData);
-//            }
-//        });
-//            favourites.addAll(favouritesFromDB);
-//            prepareFavourites();
-//
-//    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -203,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
-
 
 
     public class JsonFileReader extends AsyncTask<String, Void, ArrayList<String>> {
@@ -245,9 +254,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             textInput_enter_city.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String value= parent.getItemAtPosition(position).toString();
-                    Log.v(TAG, "textInput_enter_city "+ value);
-                    Intent intent=new Intent(MainActivity.this, WeatherDescription.class);
+                    String value = parent.getItemAtPosition(position).toString();
+                    Log.v(TAG, "textInput_enter_city " + value);
+                    Intent intent = new Intent(MainActivity.this, WeatherDescription.class);
                     intent.putExtra(Keys.CITY, value);
                     startActivity(intent);
                 }

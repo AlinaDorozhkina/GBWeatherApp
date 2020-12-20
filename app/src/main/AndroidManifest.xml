@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GBWeatherApp">
         <service
-            android:name=".utils.MyIntentService"
+            android:name=".service.MyIntentService"
             android:exported="false"></service>
 
         <activity android:name=".WeatherDescription" />

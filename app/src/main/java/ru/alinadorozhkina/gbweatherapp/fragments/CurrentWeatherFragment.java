@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
@@ -20,6 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import ru.alinadorozhkina.gbweatherapp.App;
+import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
+import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 import ru.alinadorozhkina.gbweatherapp.R;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
@@ -39,10 +44,10 @@ public class CurrentWeatherFragment extends Fragment {
     private String imageUrl = "http://openweathermap.org/img/wn/%s@2x.png";
     private TextView textViewPressureValue;
     private TextView textViewWindSpeedValue;
-    private TextView textViewPressure;
-    private TextView textViewSpeed;
     private TextView textViewData;
-    private OnCurrentWeatherFragmentDataListener mListener;
+    private FavViewModel viewModel;
+    private Favourites favourite_city;
+
 
     @Nullable
     @Override
@@ -60,12 +65,19 @@ public class CurrentWeatherFragment extends Fragment {
         favourites_button.setOnClickListener(clickListener);
         textViewPressureValue = layout.findViewById(R.id.textViewPressureValue);
         textViewWindSpeedValue = layout.findViewById(R.id.textViewWindSpeedValue);
-        textViewPressure = layout.findViewById(R.id.textViewPressure);
-        textViewSpeed = layout.findViewById(R.id.textViewSpeed);
         imageViewWeatherIcon = layout.findViewById(R.id.imageViewWeatherIcon);
         textViewData = layout.findViewById(R.id.textViewData);
         textViewData.setText(getTodayDateInStringFormat());
         context = getActivity();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(App.getInstance()).create(FavViewModel.class);
+        }
+        setFavourites();
     }
 
     @Override
@@ -93,45 +105,39 @@ public class CurrentWeatherFragment extends Fragment {
         return currentWeatherFragment;
     }
 
-
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String message = getString(R.string.snackbar_message_add, city);
-            mListener.sendCityAndTemp(city, textViewTemperature.getText().toString(), textViewData.getText().toString());
-
-            Snackbar
-                    .make(v, message, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(ContextCompat.getColor(getActivity(), R.color.grey))
-                    .setAction("Action", null).show();
+            if (favourite_city == null) {
+                //flag=true;
+                viewModel.insert(new Favourites(city, textViewTemperature.getText().toString(), textViewData.getText().toString()));
+                Snackbar
+                        .make(v, getString(R.string.snackbar_message_add, city), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(ContextCompat.getColor(getActivity(), R.color.grey))
+                        .setAction("Action", null).show();
+            } else {
+                viewModel.deleteFavourites(favourite_city);
+                Snackbar
+                        .make(v, getString(R.string.snackbar_message_delete, city), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(ContextCompat.getColor(getActivity(), R.color.grey))
+                        .setAction("Action", null).show();
+            }
+            setFavourites();
         }
     };
 
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(CURRENT_WEATHER, currentWeather);
+    private void setFavourites() {
+        favourite_city = viewModel.getFavouritesByName(city);
+        if (favourite_city != null) {
+            favourites_button.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_horizontal_rule_24));
+        } else {
+            favourites_button.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_add_24));
+        }
     }
 
     private String getTodayDateInStringFormat() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("E, d MMMM", Locale.getDefault());
         return df.format(c.getTime());
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnCurrentWeatherFragmentDataListener) {
-            mListener = (OnCurrentWeatherFragmentDataListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + getString(R.string.interface_error, "OnCurrentWeatherFragmentDataListener"));
-        }
-    }
-
-    public interface OnCurrentWeatherFragmentDataListener {
-        void sendCityAndTemp(String city, String temp, String data);
     }
 }

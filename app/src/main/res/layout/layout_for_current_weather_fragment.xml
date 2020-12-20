@@ -87,7 +87,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="@dimen/common_margin"
-        android:padding="15dp"
+        android:padding="@dimen/common_margin"
         android:background="@drawable/circle"
         android:contentDescription="@string/addingToFavourite"
         app:icon="@drawable/ic_baseline_add_24"
