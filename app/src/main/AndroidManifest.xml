@@ -13,9 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GBWeatherApp">
-        <activity android:name=".SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:noHistory="true">
+        <activity android:name=".SettingsActivity"></activity>
+        <activity
+            android:name=".SplashActivity"
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,16 +29,13 @@
             android:name=".service.MyIntentService"
             android:exported="false" />
 
-        <activity android:name=".WeatherDescription"/>
-
+        <activity android:name=".WeatherDescription" />
         <activity android:name=".MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </activity>
     </application>
 
