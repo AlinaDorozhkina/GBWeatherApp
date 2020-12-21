@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -81,6 +82,53 @@
             app:layout_constraintTop_toBottomOf="@id/textViewTemperature" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewPressure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/air_pressure"
+        android:textSize="@dimen/text_size_small"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/liner_ring"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/favourites_button"
+
+        />
+
+    <TextView
+        android:id="@+id/textViewPressureValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/my_text"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintTop_toBottomOf="@id/textViewPressure"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/favourites_button"
+        />
+
+    <TextView
+        android:id="@+id/textViewSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/window_speed"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintStart_toEndOf="@id/favourites_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/liner_ring"/>
+
+    <TextView
+        android:id="@+id/textViewWindSpeedValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/my_text"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintTop_toBottomOf="@id/textViewSpeed"
+        app:layout_constraintStart_toEndOf="@id/favourites_button"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/favourites_button"
         android:layout_width="70dp"
@@ -93,60 +141,5 @@
         app:layout_constraintTop_toBottomOf="@id/liner_ring"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
-    <LinearLayout
-        android:id="@+id/liner_for_pressure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_margin="@dimen/common_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/favourites_button"
-        app:layout_constraintTop_toBottomOf="@id/liner_ring">
-
-        <TextView
-            android:id="@+id/textViewPressure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/air_pressure"
-            android:textSize="@dimen/text_size_small"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/textViewPressureValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/my_text"
-            android:textSize="@dimen/text_size_small"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/liner_for_wind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_margin="@dimen/common_margin"
-        app:layout_constraintTop_toBottomOf="@id/liner_ring"
-        app:layout_constraintStart_toEndOf="@id/favourites_button">
-
-        <TextView
-            android:id="@+id/textViewSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/window_speed"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small"/>
-
-        <TextView
-            android:id="@+id/textViewWindSpeedValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/my_text"
-            android:textSize="@dimen/text_size_small"/>
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

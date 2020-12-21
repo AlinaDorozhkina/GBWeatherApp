@@ -63,7 +63,7 @@ public class WeatherDescription extends AppCompatActivity   {
     }
     private void initToolBar(){
         Toolbar toolbar = findViewById(R.id.toolbarWeatherDescr);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_keyboard_backspace_24);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_home_24);
         setSupportActionBar(toolbar);
     }
     private void initIntent(){
@@ -157,7 +157,7 @@ public class WeatherDescription extends AppCompatActivity   {
         return weekWeathersList;
     }
 
-    private static String editDay(String data) {
+    private  String editDay(String data) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat fmt2 = new SimpleDateFormat("E, d MMM", Locale.getDefault());
         try {
