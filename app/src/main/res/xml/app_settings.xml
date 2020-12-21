@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<CheckBoxPreference
+    android:defaultValue="true"
+    android:key="storm_warning"
+    android:title="@string/storm_warning"
+    android:summaryOff="@string/off"
+    android:summary="@string/on" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="theme"
+        android:title="@string/theme"
+        android:summaryOff="@string/light"
+        android:summary="@string/dark"
+        />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="theme"
+        android:title="@string/location"
+        android:summaryOff="@string/no"
+        android:summary="@string/yes"
+        />
+</PreferenceScreen>

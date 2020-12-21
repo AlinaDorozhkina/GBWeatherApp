@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,18 +55,21 @@ import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginFragmentDataListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int SETTINGS_CODE = 1;
     private LoginFragment loginFragment;
     private MaterialAutoCompleteTextView textInput_enter_city;
     private FavouritesAdapter favouritesAdapter;
     private RecyclerView recyclerView;
     private FavViewModel viewModel;
     private ImageView image_delete_all;
-    private SharedPreferences sharedPreferences;
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sp.getBoolean("theme", true )){
+            setTheme(R.style.AppDarkTheme);
+        }
         setContentView(R.layout.activity_main);
         initView();
         Toolbar toolbar = initToolbar();
@@ -76,15 +80,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initView() {
-//        sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
-//        if (sharedPreferences!=null){
-//            String city = sharedPreferences.getString(Keys.SAVE_CITY, null);
-//            if (city!=null){
-//                Intent intent = new Intent(this, WeatherDescription.class);
-//                intent.putExtra(Keys.CITY, city);
-//                startActivity(intent);
-//            }
-//        }
         recyclerView = findViewById(R.id.recycleView_for_favourites_city);
         textInput_enter_city = findViewById(R.id.textInput_enter_city);
         image_delete_all = findViewById(R.id.image_delete_all);
@@ -182,8 +177,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         switch (id) {
             case R.id.settings1:
-//                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-//                startActivityForResult(intent, SETTINGS_CODE);
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivityForResult(intent, SETTINGS_CODE);
                 return true;
             case R.id.loginPassword:
                 loginFragment = new LoginFragment();

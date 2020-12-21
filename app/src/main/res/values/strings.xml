@@ -34,4 +34,13 @@
     <string name="button_ok">OK</string>
     <string name="error">Ошибка</string>
     <string name="city_error">Произошла ошибка. Вы будете перенаправлены на главную страницу.</string>
+    <string name="on">Подключено</string>
+    <string name="off">Отключено</string>
+    <string name="storm_warning">Предупреждение о шторме</string>
+    <string name="theme">Тема</string>
+    <string name="dark">Темная</string>
+    <string name="light">Светлая</string>
+    <string name="location">Определять местоположение</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>
