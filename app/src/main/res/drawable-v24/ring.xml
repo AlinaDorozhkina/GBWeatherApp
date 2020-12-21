@@ -4,9 +4,8 @@
     <size
         android:width="50dp"
         android:height="50dp" />
-    <gradient
-        android:endColor="@color/orange"
-        android:startColor="@color/green"/>
+
+
     <stroke
         android:width="12dp"
         android:color="@color/orange_light" />

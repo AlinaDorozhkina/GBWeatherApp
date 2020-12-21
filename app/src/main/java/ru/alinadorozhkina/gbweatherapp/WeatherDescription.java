@@ -3,16 +3,17 @@ package ru.alinadorozhkina.gbweatherapp;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import androidx.appcompat.widget.Toolbar;
+
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
+import android.view.MenuItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,7 +34,7 @@ import ru.alinadorozhkina.gbweatherapp.interfaces.OpenWeather;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
 
-public class WeatherDescription extends AppCompatActivity  {
+public class WeatherDescription extends AppCompatActivity   {
 
     public static final String BROADCAST_ACTION_FINISHED = "service get result";
     private static final String TAG = WeatherDescription.class.getSimpleName();
@@ -46,12 +47,8 @@ public class WeatherDescription extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_description);
-        if (getIntent().hasExtra(Keys.CITY)) {
-            city = getIntent().getStringExtra(Keys.CITY);
-            sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
-            saveCity(city);
-            Log.v(TAG, " получен интент " + city);
-        }
+        initToolBar();
+        initIntent();
         initRetrofit();
         requestRetrofit(city, "ru", "metric", BuildConfig.WEATHER_API_KEY);
 
@@ -63,6 +60,30 @@ public class WeatherDescription extends AppCompatActivity  {
 //        startService(intentMyIntentService.putExtra(Keys.URL, url.toString()));
 //        DownloadWeatherTask task = new DownloadWeatherTask();
 //        task.execute(String.format(WEATHER_URL, city, BuildConfig.WEATHER_API_KEY));
+    }
+    private void initToolBar(){
+        Toolbar toolbar = findViewById(R.id.toolbarWeatherDescr);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_keyboard_backspace_24);
+        setSupportActionBar(toolbar);
+    }
+    private void initIntent(){
+        if (getIntent().hasExtra(Keys.CITY)) {
+            city = getIntent().getStringExtra(Keys.CITY);
+            sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
+            saveCity(city);
+            Log.v(TAG, " получен интент " + city);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent=new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initRetrofit(){
@@ -81,7 +102,6 @@ public class WeatherDescription extends AppCompatActivity  {
                 if (response.body()!=null){
                     String cityName = response.body().getCity().getName();
                     Log.v(TAG, " название города "+cityName );
-                    initRecycleView(getWeekWeather(response));
                     int temp =(int) response.body().getList()[0].getMain().getTemp();
                     String description = response.body().getList()[0].getWeather()[0].getDescription();
                     String icon = response.body().getList()[0].getWeather()[0].getIcon();
@@ -93,6 +113,7 @@ public class WeatherDescription extends AppCompatActivity  {
                     CurrentWeatherFragment currentWeatherFragment = CurrentWeatherFragment.init(currentWeather);
                     currentWeatherFragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.frame_for_current_weather_fragment, currentWeatherFragment).commit();
+                    initRecycleView(getWeekWeather(response));
                 }
             }
 
@@ -167,6 +188,12 @@ public class WeatherDescription extends AppCompatActivity  {
         editor.apply();
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(this, MainActivity.class);
+        startActivity(intent);
+        super.onBackPressed();
+    }
 
     //    @Override
 //    protected void onStart() {

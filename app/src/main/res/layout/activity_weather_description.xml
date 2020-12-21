@@ -6,10 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".WeatherDescription"
-    android:background="@color/orange_dark">
+    tools:context=".WeatherDescription">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarWeatherDescr"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
+        android:background="@color/green"/>
+
 
     <FrameLayout
+        android:layout_marginTop="@dimen/common_margin"
         android:id="@+id/frame_for_current_weather_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -24,4 +32,6 @@
         android:layout_height="wrap_content">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+
 </LinearLayout>

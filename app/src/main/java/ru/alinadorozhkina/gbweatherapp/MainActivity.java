@@ -45,7 +45,6 @@ import java.util.List;
 import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
 import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.adapters.FavouritesAdapter;
-import ru.alinadorozhkina.gbweatherapp.current.weather.entities.WeatherRequest;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentAboutApp;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentSendingEmail;
 import ru.alinadorozhkina.gbweatherapp.fragments.LoginFragment;
@@ -55,7 +54,6 @@ import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginFragmentDataListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private final int REQUEST_CODE = 1;
     private LoginFragment loginFragment;
     private MaterialAutoCompleteTextView textInput_enter_city;
     private FavouritesAdapter favouritesAdapter;
@@ -78,15 +76,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initView() {
-        sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
-        if (sharedPreferences!=null){
-            String city = sharedPreferences.getString(Keys.SAVE_CITY, null);
-            if (city!=null){
-                Intent intent = new Intent(this, WeatherDescription.class);
-                intent.putExtra(Keys.CITY, city);
-                startActivity(intent);
-            }
-        }
+//        sharedPreferences=this.getSharedPreferences(Keys.SHARED_NAME, MODE_PRIVATE);
+//        if (sharedPreferences!=null){
+//            String city = sharedPreferences.getString(Keys.SAVE_CITY, null);
+//            if (city!=null){
+//                Intent intent = new Intent(this, WeatherDescription.class);
+//                intent.putExtra(Keys.CITY, city);
+//                startActivity(intent);
+//            }
+//        }
         recyclerView = findViewById(R.id.recycleView_for_favourites_city);
         textInput_enter_city = findViewById(R.id.textInput_enter_city);
         image_delete_all = findViewById(R.id.image_delete_all);
