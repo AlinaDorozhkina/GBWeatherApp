@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
+import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 
 public class SplashActivity extends AppCompatActivity {
 

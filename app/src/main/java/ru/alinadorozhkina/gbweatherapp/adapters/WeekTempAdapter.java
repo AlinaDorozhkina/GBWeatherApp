@@ -15,15 +15,16 @@ import com.squareup.picasso.Picasso;
 import ru.alinadorozhkina.gbweatherapp.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
 
 public class WeekTempAdapter extends RecyclerView.Adapter<WeekTempAdapter.ViewHolder> {
-    private ArrayList<WeekWeather> dailyWeather;
+    private List<WeekWeather> dailyWeather;
     protected Context context;
     private String urlImage = "http://openweathermap.org/img/wn/%s@2x.png";
 
-    public WeekTempAdapter(Context context, ArrayList<WeekWeather> dailyWeather) {
+    public WeekTempAdapter(Context context, List<WeekWeather> dailyWeather) {
         this.context = context;
         this.dailyWeather = dailyWeather;
     }
