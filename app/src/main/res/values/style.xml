@@ -36,5 +36,4 @@
         <item name="android:windowBackground">@drawable/splash_activity_draw</item>
     </style>
 
-
 </resources>

@@ -51,6 +51,7 @@ import ru.alinadorozhkina.gbweatherapp.fragments.FragmentSendingEmail;
 import ru.alinadorozhkina.gbweatherapp.fragments.LoginFragment;
 import ru.alinadorozhkina.gbweatherapp.helper.AllCity;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
+import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginFragmentDataListener {
@@ -61,8 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FavouritesAdapter favouritesAdapter;
     private RecyclerView recyclerView;
     private FavViewModel viewModel;
-    private ImageView image_delete_all;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initView() {
         recyclerView = findViewById(R.id.recycleView_for_favourites_city);
         textInput_enter_city = findViewById(R.id.textInput_enter_city);
-        image_delete_all = findViewById(R.id.image_delete_all);
+        ImageView image_delete_all = findViewById(R.id.image_delete_all);
         image_delete_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     public class JsonFileReader extends AsyncTask<String, Void, ArrayList<String>> {
-        private Context context;
+        private final Context context;
 
         public JsonFileReader(Context context) {
             this.context = context;

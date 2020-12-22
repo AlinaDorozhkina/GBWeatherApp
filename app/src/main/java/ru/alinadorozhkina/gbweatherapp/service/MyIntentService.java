@@ -2,7 +2,6 @@ package ru.alinadorozhkina.gbweatherapp.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,7 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import ru.alinadorozhkina.gbweatherapp.WeatherDescription;
+import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 import ru.alinadorozhkina.gbweatherapp.current.weather.entities.WeatherRequest;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;

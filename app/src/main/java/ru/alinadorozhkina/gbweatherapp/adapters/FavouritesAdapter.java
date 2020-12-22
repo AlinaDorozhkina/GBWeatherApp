@@ -16,7 +16,7 @@ import java.util.List;
 
 import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.R;
-import ru.alinadorozhkina.gbweatherapp.WeatherDescription;
+import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 
 
