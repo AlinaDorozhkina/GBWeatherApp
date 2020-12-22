@@ -12,7 +12,6 @@ import ru.alinadorozhkina.gbweatherapp.interfaces.OpenWeather;
  * Создаем объект ApiFactory, который будет создавать ретрофит.
  * Чтобы объект ретрофит был единственным, создаю паттерн синглтон.
  * Ретрофит и GSON ответственны за получение и преобразование данных.
- * RxJava устанавливает слушатель, прошло ли все успешно, или есть ошибка
  */
 public class ApiFactory {
     private static ApiFactory apiFactory;
