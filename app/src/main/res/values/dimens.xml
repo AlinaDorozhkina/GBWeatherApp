@@ -7,6 +7,7 @@
     <dimen name="text_size_big">50sp</dimen>
     <dimen name="text_size_average">40sp</dimen>
     <dimen name="text_size_small">25sp</dimen>
+    <dimen name="snack_text">20sp</dimen>
     <dimen name="weather_icon_size">90dp</dimen>
     <dimen name="ring_size">245dp</dimen>
 </resources>

@@ -74,6 +74,4 @@ public class MyIntentService extends IntentService {
         broadcastIntent.putParcelableArrayListExtra(Keys.JSON_RESULT, weekWeathersList);
         sendBroadcast(broadcastIntent);
     }
-
-
 }

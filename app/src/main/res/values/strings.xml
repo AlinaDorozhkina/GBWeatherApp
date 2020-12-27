@@ -43,4 +43,12 @@
     <string name="location">Определять местоположение</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="title_activity_weather_maps">Map</string>
+    <string name="enter_coordinates">Введите координаты</string>
+    <string name="your_location">Ваше местоположение</string>
+    <string name="adjust_location_settings">Исправьте настройки геолокации на Вашем устройстве</string>
+    <string name="latidude">Долгота</string>
+    <string name="longitude">Широта</string>
+    <string name="know_weather">Узнать погоду</string>
+    <string name="my_location">Мое местоположение</string>
 </resources>

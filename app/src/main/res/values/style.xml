@@ -9,7 +9,7 @@
     <style name="my_snackbar_text_style">
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/snack_text</item>
         <item name="android:fontFamily">@font/alice</item>
     </style>
 

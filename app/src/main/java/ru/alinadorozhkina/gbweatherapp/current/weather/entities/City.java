@@ -10,6 +10,9 @@ public class City {
     @SerializedName("country")
     @Expose
     String country;
+    @SerializedName("coord")
+    @Expose
+    Coord coord;
 
     public String getName() {
         return name;
@@ -17,5 +20,9 @@ public class City {
 
     public String getCountry() {
         return country;
+    }
+
+    public Coord getCoord() {
+        return coord;
     }
 }
