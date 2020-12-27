@@ -47,6 +47,8 @@ public class CurrentWeatherFragment extends Fragment {
     private TextView textViewData;
     private FavViewModel viewModel;
     private Favourites favourite_city;
+    private double lat;
+    private double lon;
 
 
     @Nullable
@@ -86,6 +88,8 @@ public class CurrentWeatherFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             currentWeather = args.getParcelable(Keys.CURRENT_WEATHER);
+            lat=currentWeather.getLat();
+            lon=currentWeather.getLon();
             city = currentWeather.getCityName();
             textViewCity.setText(currentWeather.getCityName());
             textViewTemperature.setText(String.format("%s °", currentWeather.getTemperature()));
@@ -109,8 +113,7 @@ public class CurrentWeatherFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (favourite_city == null) {
-                //flag=true;
-                viewModel.insert(new Favourites(city, textViewTemperature.getText().toString(), textViewData.getText().toString()));
+                viewModel.insert(new Favourites(city, textViewTemperature.getText().toString(), textViewData.getText().toString(), lat, lon));
                 Snackbar
                         .make(v, getString(R.string.snackbar_message_add, city), Snackbar.LENGTH_LONG)
                         .setBackgroundTint(ContextCompat.getColor(getActivity(), R.color.grey))

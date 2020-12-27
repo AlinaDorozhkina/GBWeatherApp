@@ -17,7 +17,7 @@
 
     <CheckBoxPreference
         android:defaultValue="true"
-        android:key="theme"
+        android:key="location"
         android:title="@string/location"
         android:summaryOff="@string/no"
         android:summary="@string/yes"

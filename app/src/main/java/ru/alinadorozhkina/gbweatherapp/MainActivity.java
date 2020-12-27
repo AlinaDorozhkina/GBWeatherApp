@@ -13,10 +13,13 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -55,6 +58,7 @@ import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginFragmentDataListener {
+    private static final String ACTION_SEND_MSG = "ru.alinadorozhkina.gbweatherapp.broadcastsender.message";
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int SETTINGS_CODE = 1;
     private LoginFragment loginFragment;
@@ -63,11 +67,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView recyclerView;
     private FavViewModel viewModel;
 
+    private static final String ACTION_CUSTOM_BROADCAST =
+            BuildConfig.APPLICATION_ID + ".ACTION_CUSTOM_BROADCAST";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getBoolean("theme", true )){
+        if (sp.getBoolean("theme", true)) {
             setTheme(R.style.AppDarkTheme);
         }
         setContentView(R.layout.activity_main);
@@ -77,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initAutoCompleteText();
         initRecycleView();
         initViewModel();
+        initNotificationChannel();
     }
 
     private void initView() {
@@ -103,6 +111,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Snackbar.make(v, R.string.enter_city, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
+            }
+        });
+        Button button_map = findViewById(R.id.button_map);
+        button_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, WeatherMapsActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -146,6 +162,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
+
+    private void initNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel("2", "name", importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

@@ -8,5 +8,8 @@ public class Keys {
     public static final String SAVE_CITY = "save_city";
     public static final String CITY = "city";
     public static final String SHARED_NAME = "shared_last_city";
+    public static final String COORDINATES = "coord";
+    public static final String LAT = "lat";
+    public static final String LON = "lon";
 
 }
