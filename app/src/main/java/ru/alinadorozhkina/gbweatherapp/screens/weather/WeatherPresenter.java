@@ -4,6 +4,7 @@ package ru.alinadorozhkina.gbweatherapp.screens.weather;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,18 +40,18 @@ public class WeatherPresenter {
     }
 
     public void loadDataByName(String city) {
+        Log.v("weatherpresenter", " получено значение "+ city);
         ApiFactory apiFactory = ApiFactory.getInstance();
         OpenWeather openWeather = apiFactory.getOpenWeather();
         openWeather.loadWeatherByName(city, LANGUAGE, UNITS_VALUE, API_CODE)
                 .enqueue(new Callback<WeatherRequest>() {
                     @Override
                     public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
-                        GetCurrentWeatherTask task = new GetCurrentWeatherTask();
-                        task.execute(response);
-                        GetWeekWeatherTask task2 = new GetWeekWeatherTask();
-                        task2.execute(response);
+                       Log.v("weatherpresenter", "by name " +response.toString());
+                        new GetCurrentWeatherTask().execute(response);
+//                        GetCurrentWeatherTask task = new GetCurrentWeatherTask(response);
+//                        task.execute();
                     }
-
                     @Override
                     public void onFailure(Call<WeatherRequest> call, Throwable t) {
                         weatherInterface.showError();
@@ -66,10 +66,10 @@ public class WeatherPresenter {
                 .enqueue(new Callback<WeatherRequest>() {
                     @Override
                     public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
-                        GetCurrentWeatherTask task = new GetCurrentWeatherTask();
-                        task.execute(response);
-                        GetWeekWeatherTask task2 = new GetWeekWeatherTask();
-                        task2.execute(response);
+                        Log.v("weatherpresenter", "by coord " +response.toString());
+                        new GetCurrentWeatherTask().execute(response);
+//                        GetCurrentWeatherTask task = new GetCurrentWeatherTask(response);
+//                        task.execute();
                     }
 
                     @Override
@@ -91,44 +91,68 @@ public class WeatherPresenter {
     }
 
     private class GetCurrentWeatherTask extends AsyncTask<Response<WeatherRequest>, Void, CurrentWeather> {
-        private CurrentWeather currentWeather;
+        //private final WeakReference <Response<WeatherRequest>> weakReferenceRequest;
+      private CurrentWeather currentWeather;
+
+//        public GetCurrentWeatherTask(Response<WeatherRequest> currentWeather) {
+//            this.weakReferenceRequest = new WeakReference<>(currentWeather);
+//        }
+
+//        @Override
+//        protected CurrentWeather doInBackground(Void... voids) {
+//            Log.v("weatherpresenter", "поток " + Thread.currentThread().toString());
+//           // Response<WeatherRequest> request = weakReferenceRequest.get();
+//            if (request.body()!=null) {
+//                String cityName = request.body().getCity().getName();
+//                Log.v("weatherpresenter", " название города " + cityName);
+//                int temp = (int)request.body().getList()[0].getMain().getTemp();
+//                String description = request.body().getList()[0].getWeather()[0].getDescription();
+//                String icon = request.body().getList()[0].getWeather()[0].getIcon();
+//                int pressure = request.body().getList()[0].getMain().getPressure();
+//                int wind = (int) request.body().getList()[0].getWind().getSpeed();
+//                int humidity = request.body().getList()[0].getMain().getHumidity();
+//                double lat =request.body().getCity().getCoord().getLat();
+//                double lon = request.body().getCity().getCoord().getLon();
+//                String data1 = "";
+//                ArrayList<WeekWeather> weekWeathersList = new ArrayList<>();
+//                for (int i = 0; i < request.body().getList().length; i++) {
+//                    WeekWeather current = new WeekWeather();
+//                    String text = request.body().getList()[i].getDt_txt();
+//                    String data = editDay(text);
+//                    if (data.equals(data1)) {
+//                    } else {
+//                        current.setDay(data);
+//                        data1 = data;
+//                        current.setTemp(request.body().getList()[i].getMain().getTemp());
+//                        current.setIcon(request.body().getList()[i].getWeather()[0].getIcon());
+//                        weekWeathersList.add(current);
+//                        Log.v("weatherpresenter", weekWeathersList.toString());
+//                    }
+//                }
+//                currentWeather = new CurrentWeather(cityName, temp, description, icon, wind, pressure, humidity,lat, lon, weekWeathersList);
+//            } else {
+//                Log.v("weatherpresenter", " request == null");
+//            }
+//            return currentWeather;
+//        }
 
         @Override
         protected CurrentWeather doInBackground(Response<WeatherRequest>... responses) {
             Log.v("weatherpresenter", "поток " + Thread.currentThread().toString());
-            if (responses[0].body() != null) {
+            // Response<WeatherRequest> request = weakReferenceRequest.get();
+            if (responses[0].body()!=null) {
                 String cityName = responses[0].body().getCity().getName();
                 Log.v("weatherpresenter", " название города " + cityName);
-                int temp = (int) responses[0].body().getList()[0].getMain().getTemp();
+                int temp = (int)responses[0].body().getList()[0].getMain().getTemp();
                 String description = responses[0].body().getList()[0].getWeather()[0].getDescription();
                 String icon = responses[0].body().getList()[0].getWeather()[0].getIcon();
                 int pressure = responses[0].body().getList()[0].getMain().getPressure();
                 int wind = (int) responses[0].body().getList()[0].getWind().getSpeed();
+                int humidity = responses[0].body().getList()[0].getMain().getHumidity();
                 double lat =responses[0].body().getCity().getCoord().getLat();
                 double lon = responses[0].body().getCity().getCoord().getLon();
-                currentWeather = new CurrentWeather(cityName, temp, description, icon, wind, pressure, lat, lon);
-            }
-            return currentWeather;
-        }
-
-        @Override
-        protected void onPostExecute(CurrentWeather currentWeather) {
-            if (currentWeather == null) {
-                weatherInterface.showError();
-            }
-            super.onPostExecute(currentWeather);
-            weatherInterface.getCurrentWeather(currentWeather);
-        }
-    }
-
-    private class GetWeekWeatherTask extends AsyncTask<Response<WeatherRequest>, Void, ArrayList<WeekWeather>> {
-        private  ArrayList<WeekWeather> weekWeathersList;
-
-        @Override
-        protected ArrayList<WeekWeather> doInBackground(Response<WeatherRequest>... responses) {
-            if (responses[0].body() != null) {
                 String data1 = "";
-                weekWeathersList = new ArrayList<>();
+                ArrayList<WeekWeather> weekWeathersList = new ArrayList<>();
                 for (int i = 0; i < responses[0].body().getList().length; i++) {
                     WeekWeather current = new WeekWeather();
                     String text = responses[0].body().getList()[i].getDt_txt();
@@ -143,17 +167,20 @@ public class WeatherPresenter {
                         Log.v("weatherpresenter", weekWeathersList.toString());
                     }
                 }
+                currentWeather = new CurrentWeather(cityName, temp, description, icon, wind, pressure, humidity,lat, lon, weekWeathersList);
+            } else {
+                Log.v("weatherpresenter", " request == null");
             }
-            return weekWeathersList;
+            return currentWeather;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<WeekWeather> weekWeathers) {
-            if (weekWeathers == null) {
+        protected void onPostExecute(CurrentWeather currentWeather) {
+            if (currentWeather == null) {
                 weatherInterface.showError();
             }
-            super.onPostExecute(weekWeathers);
-            weatherInterface.getWeekWeatherList(weekWeathers);
+            super.onPostExecute(currentWeather);
+            weatherInterface.getCurrentWeather(currentWeather);
         }
     }
 }

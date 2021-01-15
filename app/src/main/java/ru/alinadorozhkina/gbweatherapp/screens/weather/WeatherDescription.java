@@ -1,21 +1,15 @@
 package ru.alinadorozhkina.gbweatherapp.screens.weather;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
-
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,26 +20,29 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
-import java.util.List;
-
+import ru.alinadorozhkina.gbweatherapp.App;
+import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
+import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.MainActivity;
 import ru.alinadorozhkina.gbweatherapp.R;
-import ru.alinadorozhkina.gbweatherapp.SplashActivity;
-import ru.alinadorozhkina.gbweatherapp.adapters.WeekTempAdapter;
+import ru.alinadorozhkina.gbweatherapp.WeatherMapsActivity;
 import ru.alinadorozhkina.gbweatherapp.fragments.CurrentWeatherFragment;
+import ru.alinadorozhkina.gbweatherapp.fragments.FavouritesFragment;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
+import ru.alinadorozhkina.gbweatherapp.interfaces.OnActivityFavouritesAddingListener;
+import ru.alinadorozhkina.gbweatherapp.interfaces.OnFragmentFavouritesListener;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
-import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
 
-public class WeatherDescription extends AppCompatActivity implements WeatherInterface {
+public class WeatherDescription extends AppCompatActivity implements OnFragmentFavouritesListener, WeatherInterface {
 
     public static final String BROADCAST_ACTION_FINISHED = "service get result";
     private static final String TAG = WeatherDescription.class.getSimpleName();
@@ -53,6 +50,13 @@ public class WeatherDescription extends AppCompatActivity implements WeatherInte
     private SharedPreferences sharedPreferences;
     private WeatherPresenter presenter;
     private static final int PERMISSION_REQUEST_CODE = 10;
+    private FavViewModel viewModel;
+    private Favourites favourite_city;
+    FloatingActionButton favourites_button;
+    private OnActivityFavouritesAddingListener addingListener;
+    private View coordinatorLayoutView;
+    private FavouritesFragment favFra;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +65,40 @@ public class WeatherDescription extends AppCompatActivity implements WeatherInte
         if (sp.getBoolean("theme", true)) {
             setTheme(R.style.AppDarkTheme);
         }
-        setContentView(R.layout.activity_weather_description);
-        initToolBar();
+        setContentView(R.layout.test);
         initIntent();
+        initToolBar();
+        favourites_button = findViewById(R.id.add_button);
+        favourites_button.setOnClickListener(clickListener);
+        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(App.getInstance()).create(FavViewModel.class);
+        coordinatorLayoutView = findViewById(R.id.coordinator_main);
+    }
+
+    View.OnClickListener clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.v(TAG, " вызван метод updateFavourites()");
+            addingListener.updateFavourites();
+            Log.v(TAG, " вызван метод updateFavourites()");
+
+        }
+    };
+
+    private void setFavourites() {
+        favourite_city = viewModel.getFavouritesByName(city);
+
+        if (favourite_city != null) {
+            Log.v(TAG, favourite_city.getCityName());
+            favourites_button.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_horizontal_rule_24));
+        } else {
+            Log.v(TAG, "setFavourites()  favourite_city = null");
+            favourites_button.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_add_24));
+        }
     }
 
     private void initToolBar() {
-        Toolbar toolbar = findViewById(R.id.toolbarWeatherDescr);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_home_24);
-        setSupportActionBar(toolbar);
+        BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
+        setSupportActionBar(bottomAppBar);
     }
 
     private void initIntent() {
@@ -91,26 +120,35 @@ public class WeatherDescription extends AppCompatActivity implements WeatherInte
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            return true;
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                startActivity(new Intent(WeatherDescription.this, MainActivity.class));
+                break;
+            case R.id.favourites:
+                if (favFra==null){
+                favFra=new FavouritesFragment();
+                getSupportFragmentManager().beginTransaction().
+                            setCustomAnimations(R.anim.slide_bottom, R.anim.slide_top)
+                            .add(R.id.frame_for_favourites, favFra)
+                            .commit();
+                } else {
+                    getSupportFragmentManager().beginTransaction()
+                            .remove(favFra)
+                            .commit();
+                    favFra=null;
+                }
+                break;
+            case R.id.map:
+                startActivity(new Intent(WeatherDescription.this, WeatherMapsActivity.class));
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
-    private void initRecycleView(List<WeekWeather> weatherList) {
-        Log.v(TAG, "initRecycleView");
-        RecyclerView recyclerView = findViewById(R.id.recycleView_for_week_weather);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        WeekTempAdapter weekTempAdapter = new WeekTempAdapter(this, weatherList);
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
-        itemDecoration.setDrawable(getDrawable(R.drawable.separator));
-        recyclerView.addItemDecoration(itemDecoration);
-        recyclerView.setAdapter(weekTempAdapter);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bottom_app_bar, menu);
+        return true;
     }
 
     private void saveCity(String city) {
@@ -129,13 +167,22 @@ public class WeatherDescription extends AppCompatActivity implements WeatherInte
 
     @Override
     public void getCurrentWeather(CurrentWeather currentWeather) {
-        Log.v(TAG, "поток " + Thread.currentThread().toString());
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Keys.CURRENT_WEATHER, currentWeather);
-        CurrentWeatherFragment currentWeatherFragment = CurrentWeatherFragment.init(currentWeather);
-        currentWeatherFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_for_current_weather_fragment, currentWeatherFragment).commit();
+        if (currentWeather == null) {
+            Log.v(TAG, "  ошибка current weather == null ");
+        } else {
+            Log.v(TAG, "currentWeather.getCityName() "+ currentWeather.getCityName());
+            city = currentWeather.getCityName();
+            setFavourites();
+            Log.v(TAG, "поток " + Thread.currentThread().toString());
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Keys.CURRENT_WEATHER, currentWeather);
+            CurrentWeatherFragment currentWeatherFragment = CurrentWeatherFragment.init(currentWeather);
+            addingListener = (OnActivityFavouritesAddingListener) currentWeatherFragment;
+            currentWeatherFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_for_weather, currentWeatherFragment).commit();
+        }
     }
+
 
     @Override
     public void showError() {
@@ -148,6 +195,8 @@ public class WeatherDescription extends AppCompatActivity implements WeatherInte
                 .setPositiveButton(R.string.button_ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(WeatherDescription.this, MainActivity.class);
+                                startActivity(intent);
                                 finish();
                             }
                         });
@@ -156,10 +205,27 @@ public class WeatherDescription extends AppCompatActivity implements WeatherInte
     }
 
     @Override
-    public void getWeekWeatherList(List<WeekWeather> weekWeatherList) {
-        Log.v(TAG, "поток " + Thread.currentThread().toString());
-        initRecycleView(weekWeatherList);
-    }
+    public void sendDataToActivity(Favourites favouriteCity) {
+        Log.v(TAG, " метод sendDataToActivity " + favouriteCity.getCityName() );
+        if (favourite_city == null) {
+                viewModel.insert(favouriteCity);
+            Log.v(TAG, "viewModel.insert(favouriteCity) " + favouriteCity.getCityName() );
+                Snackbar
+                        .make(coordinatorLayoutView, getString(R.string.snackbar_message_add, city), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(ContextCompat.getColor(this, R.color.grey))
+                        .setAnchorView(favourites_button)
+                        .setAction("Action", null).show();
+            } else {
+                viewModel.deleteFavourites(favourite_city);
+            Log.v(TAG, "viewModel.deleteFavourites(favourite_city)" + favouriteCity.getCityName() );
+                Snackbar
+                        .make(coordinatorLayoutView, getString(R.string.snackbar_message_delete, city), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(ContextCompat.getColor(this, R.color.grey))
+                        .setAnchorView(favourites_button)
+                        .setAction("Action", null).show();
+            }
+            setFavourites();
+        }
 
 
     private void requestPemissions() {
@@ -187,7 +253,6 @@ public class WeatherDescription extends AppCompatActivity implements WeatherInte
                     presenter = new WeatherPresenter(WeatherDescription.this);
                     presenter.loadDataByCoord(location.getLatitude(), location.getLongitude());
                 }
-
                 @Override
                 public void onStatusChanged(String provider, int status, Bundle extras) {
                 }

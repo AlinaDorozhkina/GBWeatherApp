@@ -18,21 +18,21 @@ public class ApiFactory {
     private static Retrofit retrofit;
     private static final String BASE_URL = "http://api.openweathermap.org/";
 
-    private ApiFactory(){
-        retrofit=new Retrofit.Builder()
+    private ApiFactory() {
+        retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
     }
 
-    public static ApiFactory getInstance(){
-        if (apiFactory==null){
-            apiFactory=new ApiFactory();
+    public static ApiFactory getInstance() {
+        if (apiFactory == null) {
+            apiFactory = new ApiFactory();
         }
         return apiFactory;
     }
 
-    public OpenWeather getOpenWeather(){
+    public OpenWeather getOpenWeather() {
         return retrofit.create(OpenWeather.class);
     }
 }

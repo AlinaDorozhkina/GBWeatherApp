@@ -2,6 +2,7 @@ package ru.alinadorozhkina.gbweatherapp.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -20,23 +23,27 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import ru.alinadorozhkina.gbweatherapp.App;
 import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
 import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
+import ru.alinadorozhkina.gbweatherapp.adapters.WeekTempAdapter;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 import ru.alinadorozhkina.gbweatherapp.R;
+import ru.alinadorozhkina.gbweatherapp.interfaces.OnActivityFavouritesAddingListener;
+import ru.alinadorozhkina.gbweatherapp.interfaces.OnFragmentFavouritesListener;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
+import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
+import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 
 
-public class CurrentWeatherFragment extends Fragment {
-    private static final String CURRENT_WEATHER = "current_weather";
-    private final String TAG = "tag";
+public class CurrentWeatherFragment extends Fragment implements OnActivityFavouritesAddingListener {
+    private final String TAG = CurrentWeatherFragment.class.getSimpleName();
     private TextView textViewTemperature;
     private TextView textViewCity;
     private TextView textViewDescription;
-    private MaterialButton favourites_button;
     private ImageView imageViewWeatherIcon;
     private Context context;
     private String city;
@@ -45,16 +52,17 @@ public class CurrentWeatherFragment extends Fragment {
     private TextView textViewPressureValue;
     private TextView textViewWindSpeedValue;
     private TextView textViewData;
-    private FavViewModel viewModel;
-    private Favourites favourite_city;
+    private TextView textViewHumidityValue;
     private double lat;
     private double lon;
+    private View layout;
+    private OnFragmentFavouritesListener listener;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.layout_for_current_weather_fragment, container, false);
+        layout = inflater.inflate(R.layout.test2, container, false);
         initView(layout);
         return layout;
     }
@@ -63,10 +71,9 @@ public class CurrentWeatherFragment extends Fragment {
         textViewCity = layout.findViewById(R.id.textViewCity);
         textViewTemperature = layout.findViewById(R.id.textViewTemperature);
         textViewDescription = layout.findViewById(R.id.textViewDescription);
-        favourites_button = layout.findViewById(R.id.favourites_button);
-        favourites_button.setOnClickListener(clickListener);
         textViewPressureValue = layout.findViewById(R.id.textViewPressureValue);
         textViewWindSpeedValue = layout.findViewById(R.id.textViewWindSpeedValue);
+        textViewHumidityValue = layout.findViewById(R.id.textViewHumidityValue);
         imageViewWeatherIcon = layout.findViewById(R.id.imageViewWeatherIcon);
         textViewData = layout.findViewById(R.id.textViewData);
         textViewData.setText(getTodayDateInStringFormat());
@@ -74,12 +81,14 @@ public class CurrentWeatherFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) {
-            viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(App.getInstance()).create(FavViewModel.class);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentFavouritesListener) {
+            listener = (OnFragmentFavouritesListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragment1DataListener");
         }
-        setFavourites();
     }
 
     @Override
@@ -98,6 +107,8 @@ public class CurrentWeatherFragment extends Fragment {
             Picasso.with(getContext()).load(String.format(imageUrl, icon)).into(imageViewWeatherIcon);
             textViewPressureValue.setText(String.format("%s мм.рт.ст", currentWeather.getPressure()));
             textViewWindSpeedValue.setText(String.format("%s м/с", currentWeather.getWind()));
+            textViewHumidityValue.setText(String.format("%s процентов", currentWeather.getHumidity()));
+            initRecycleView(currentWeather.getWeekWeathersList());
         }
     }
 
@@ -109,38 +120,29 @@ public class CurrentWeatherFragment extends Fragment {
         return currentWeatherFragment;
     }
 
-    private View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (favourite_city == null) {
-                viewModel.insert(new Favourites(city, textViewTemperature.getText().toString(), textViewData.getText().toString(), lat, lon));
-                Snackbar
-                        .make(v, getString(R.string.snackbar_message_add, city), Snackbar.LENGTH_LONG)
-                        .setBackgroundTint(ContextCompat.getColor(getActivity(), R.color.grey))
-                        .setAction("Action", null).show();
-            } else {
-                viewModel.deleteFavourites(favourite_city);
-                Snackbar
-                        .make(v, getString(R.string.snackbar_message_delete, city), Snackbar.LENGTH_LONG)
-                        .setBackgroundTint(ContextCompat.getColor(getActivity(), R.color.grey))
-                        .setAction("Action", null).show();
-            }
-            setFavourites();
-        }
-    };
-
-    private void setFavourites() {
-        favourite_city = viewModel.getFavouritesByName(city);
-        if (favourite_city != null) {
-            favourites_button.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_horizontal_rule_24));
-        } else {
-            favourites_button.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_add_24));
-        }
-    }
-
     private String getTodayDateInStringFormat() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("E, d MMMM", Locale.getDefault());
         return df.format(c.getTime());
+    }
+
+    private void initRecycleView(List<WeekWeather> weatherList) {
+        Log.v(TAG, "initRecycleView");
+        RecyclerView recyclerView = layout.findViewById(R.id.recycleView_for_week_weather);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        WeekTempAdapter weekTempAdapter = new WeekTempAdapter(context, weatherList);
+        //DividerItemDecoration itemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        //itemDecoration.setDrawable(getDrawable(R.drawable.separator));
+        //recyclerView.addItemDecoration(itemDecoration);
+        recyclerView.setAdapter(weekTempAdapter);
+    }
+
+    @Override
+    public void updateFavourites() {
+        Favourites fav = new Favourites(city, textViewTemperature.getText().toString(), textViewData.getText().toString(), lat, lon);
+        Log.v(TAG, " вызван метод updateFavourites() , передано " + fav.getCityName());
+        listener.sendDataToActivity(fav);
     }
 }

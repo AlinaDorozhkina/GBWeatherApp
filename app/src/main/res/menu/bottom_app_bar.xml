@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/favourites"
+        android:icon="@drawable/ic_baseline_favorite_24"
+        android:title="@string/favourite_cities"
+        android:contentDescription="@string/favourite_cities"
+        app:showAsAction="ifRoom"
+        />
+
+
+    <item
+        android:id="@+id/map"
+        android:icon="@drawable/ic_baseline_location_on_24"
+        android:title="@string/map"
+        android:contentDescription="@string/map"
+        app:showAsAction="always"
+        />
+
+</menu>

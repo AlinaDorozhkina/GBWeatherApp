@@ -50,5 +50,12 @@
     <string name="latidude">Долгота</string>
     <string name="longitude">Широта</string>
     <string name="know_weather">Узнать погоду</string>
-    <string name="my_location">Мое местоположение</string>
+    <string name="my_location">Моя локация</string>
+    <string name="go_to_map">Перейти в режим карты</string>
+    <string name="moisture">Влажность</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_all_favourites">удалить все избранное</string>
+    <string name="favourite_cities">Избранные города</string>
+    <string name="map">карта</string>
 </resources>

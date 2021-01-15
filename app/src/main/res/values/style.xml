@@ -3,15 +3,16 @@
     <style name="my_text">
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">@font/alice</item>
+        <item name="android:fontFamily">@font/droid_sans</item>
     </style>
 
     <style name="my_snackbar_text_style">
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/snack_text</item>
-        <item name="android:fontFamily">@font/alice</item>
+        <item name="android:fontFamily">@font/droid_sans</item>
     </style>
+
 
     <style name="AlertDialog" parent = "Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:colorAccent">@android:color/holo_red_light</item>

@@ -3,6 +3,8 @@ package ru.alinadorozhkina.gbweatherapp.parcelable.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 public class CurrentWeather implements Parcelable {
     String cityName;
     double temperature;
@@ -10,18 +12,22 @@ public class CurrentWeather implements Parcelable {
     String icon;
     int wind;
     int pressure;
+    int humidity;
     double lat;
     double lon;
+    ArrayList<WeekWeather> weekWeathersList;
 
-    public CurrentWeather(String cityName, double temperature, String description, String icon, int wind, int pressure, double lat, double lon) {
+    public CurrentWeather(String cityName, double temperature, String description, String icon, int wind, int pressure, int humidity, double lat, double lon, ArrayList<WeekWeather> weekWeathersList) {
         this.cityName = cityName;
         this.temperature = temperature;
         this.description = description;
         this.icon = icon;
         this.wind=wind;
         this.pressure=pressure;
+        this.humidity=humidity;
         this.lat=lat;
         this.lon=lon;
+        this.weekWeathersList=weekWeathersList;
     }
 
     protected CurrentWeather(Parcel in) {
@@ -31,8 +37,10 @@ public class CurrentWeather implements Parcelable {
         icon=in.readString();
         wind=in.readInt();
         pressure=in.readInt();
+        humidity=in.readInt();
         lat =in.readDouble();
         lon=in.readDouble();
+        weekWeathersList=in.readArrayList(null);
     }
 
     public static final Creator<CurrentWeather> CREATOR = new Creator<CurrentWeather>() {
@@ -61,8 +69,10 @@ public class CurrentWeather implements Parcelable {
         dest.writeString(icon);
         dest.writeInt(wind);
         dest.writeInt(pressure);
+        dest.writeInt(humidity);
         dest.writeDouble(lat);
         dest.writeDouble(lon);
+        dest.writeList(weekWeathersList);
     }
 
     public String getCityName() {
@@ -89,6 +99,23 @@ public class CurrentWeather implements Parcelable {
         return pressure;
     }
 
+
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public int getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
     @Override
     public String toString() {
         return "CurrentWeather{" +
@@ -98,14 +125,17 @@ public class CurrentWeather implements Parcelable {
                 ", icon='" + icon + '\'' +
                 ", wind=" + wind +
                 ", pressure=" + pressure +
+                ", humidity=" + humidity +
+                ", lat=" + lat +
+                ", lon=" + lon +
                 '}';
     }
 
-    public double getLat() {
-        return lat;
+    public ArrayList<WeekWeather> getWeekWeathersList() {
+        return weekWeathersList;
     }
 
-    public double getLon() {
-        return lon;
+    public void setWeekWeathersList(ArrayList<WeekWeather> weekWeathersList) {
+        this.weekWeathersList = weekWeathersList;
     }
 }

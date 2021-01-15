@@ -5,6 +5,10 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/go_to_map"
+            android:title="@string/go_to_map"
+            android:icon="@drawable/ic_baseline_map_24"/>
 
         <item
             android:id="@+id/write_to_developer"
