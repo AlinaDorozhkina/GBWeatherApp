@@ -8,7 +8,7 @@
     android:summary="@string/on" />
 
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="theme"
         android:title="@string/theme"
         android:summaryOff="@string/light"
@@ -16,7 +16,7 @@
         />
 
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="location"
         android:title="@string/location"
         android:summaryOff="@string/no"

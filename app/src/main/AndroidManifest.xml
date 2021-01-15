@@ -15,7 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GBWeatherApp">
-
+        <service
+            android:name=".service.MyFirebaseMessageService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -27,6 +34,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name=".WeatherMapsActivity"
@@ -37,7 +47,7 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="ru.alinadorozhkina.gbweatherapp.broadcastsender.message" />
+                <action android:name="android.intent.action.BATTERY_LOW" />
             </intent-filter>
         </receiver>
 

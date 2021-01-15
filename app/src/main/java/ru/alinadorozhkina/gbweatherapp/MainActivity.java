@@ -31,9 +31,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
@@ -58,17 +62,11 @@ import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginFragmentDataListener {
-    private static final String ACTION_SEND_MSG = "ru.alinadorozhkina.gbweatherapp.broadcastsender.message";
+    private static final String NotificationID="2";
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int SETTINGS_CODE = 1;
     private LoginFragment loginFragment;
     private MaterialAutoCompleteTextView textInput_enter_city;
-    private FavouritesAdapter favouritesAdapter;
-    private RecyclerView recyclerView;
-    private FavViewModel viewModel;
-
-    private static final String ACTION_CUSTOM_BROADCAST =
-            BuildConfig.APPLICATION_ID + ".ACTION_CUSTOM_BROADCAST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,21 +80,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
         initAutoCompleteText();
-        initRecycleView();
-        initViewModel();
         initNotificationChannel();
+        initFirebase();
+    }
+    private void initFirebase(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            // Не удалось получить токен, произошла ошибка
+                            Log.w("TAG", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Получить токен
+                        String token = task.getResult().getToken();
+                        Log.v(TAG, "токен "+ token);
+                        // Сохранить токен...
+                    }
+                });
     }
 
     private void initView() {
-        recyclerView = findViewById(R.id.recycleView_for_favourites_city);
         textInput_enter_city = findViewById(R.id.textInput_enter_city);
-        ImageView image_delete_all = findViewById(R.id.image_delete_all);
-        image_delete_all.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewModel.deleteAll();
-            }
-        });
         Button button_show = findViewById(R.id.button_show);
         button_show.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,22 +120,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-        Button button_map = findViewById(R.id.button_map);
-        button_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, WeatherMapsActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void initRecycleView() {
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        favouritesAdapter = new FavouritesAdapter(this);
-        recyclerView.setAdapter(favouritesAdapter);
     }
 
     private void initAutoCompleteText() {
@@ -151,23 +142,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void initViewModel() {
-        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication()).create(FavViewModel.class);
-        viewModel.getAllFavourites().observe(this, new Observer<List<Favourites>>() {
-            @Override
-            public void onChanged(List<Favourites> favourites) {
-                if (favourites != null) {
-                    favouritesAdapter.setFavourites(favourites);
-                }
-            }
-        });
-    }
 
     private void initNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel("2", "name", importance);
+            NotificationChannel channel = new NotificationChannel(NotificationID, "name", importance);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -185,6 +165,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.about_app:
                 FragmentAboutApp fragmentAboutApp = new FragmentAboutApp();
                 getSupportFragmentManager().beginTransaction().replace(R.id.frame_for_extra, fragmentAboutApp).addToBackStack(null).commit();
+                break;
+            case R.id.go_to_map:
+                Intent intent = new Intent(MainActivity.this, WeatherMapsActivity.class);
+                startActivity(intent);
                 break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -225,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void correctHeader(String name) {
-
         TextView header_instruction = findViewById(R.id.header_instruction);
         ImageView imageView_header = findViewById(R.id.imageView_header);
         imageView_header.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_baseline_tag_faces_24));
@@ -241,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
-
 
     public class JsonFileReader extends AsyncTask<String, Void, ArrayList<String>> {
         private final Context context;

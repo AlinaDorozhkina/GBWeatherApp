@@ -9,7 +9,7 @@
         style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/green" />
+        android:background="?attr/colorPrimary" />
 
     <fragment
         android:id="@+id/setting_fragment"

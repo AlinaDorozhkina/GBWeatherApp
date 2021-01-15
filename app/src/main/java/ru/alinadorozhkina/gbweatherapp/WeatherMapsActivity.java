@@ -1,24 +1,27 @@
 package ru.alinadorozhkina.gbweatherapp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -43,6 +46,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +80,13 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sp.getBoolean("theme", true)) {
+            setTheme(R.style.AppDarkTheme);
+        }
         setContentView(R.layout.activity_weather_maps);
         initView();
+        initToolBar();
         addFavouritesCitiesOnMap();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -88,7 +97,7 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(App.getInstance()).create(FavViewModel.class);
         edit_text_lat = findViewById(R.id.edit_text_lat);
         edit_text_lon = findViewById(R.id.edit_text_lon);
-        Button check_weather_button = findViewById(R.id.check_weather_button);
+        MaterialButton check_weather_button = findViewById(R.id.check_weather_button);
         check_weather_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +113,7 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
             }
         });
 
-        Button find_me_button = findViewById(R.id.find_me_button);
+        MaterialButton find_me_button = findViewById(R.id.find_me_button);
         find_me_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,20 +127,44 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
         });
     }
 
+    private void initToolBar() {
+        Toolbar toolbar = findViewById(R.id.toolbarWeatherMap);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_home_24);
+        setActionBar(toolbar);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
     private void addFavouritesCitiesOnMap() {
         List<Marker> markers = new ArrayList<Marker>();
         viewModel.getAllFavourites().observe(this, new Observer<List<Favourites>>() {
             @Override
             public void onChanged(List<Favourites> favourites) {
                 if (favourites != null) {
+                    Log.v("WEATHERMAPACTIVITY"," размер "+ favourites.size());
                     for (int i = 0; i < favourites.size(); i++) {
                         String title = favourites.get(i).getCityName();
                         LatLng location = new LatLng(favourites.get(i).getLat(), favourites.get(i).getLon());
-                        Marker marker = mMap.addMarker(new MarkerOptions()
+                        Log.v("WEATHERMAPACTIVITY", " координаты "+ location.latitude + location.longitude);
+                        mMap.addMarker(new MarkerOptions()
                                 .position(location)
                                 .title(title)
                                 .icon(BitmapDescriptorFactory.defaultMarker()));
-                        markers.add(marker);
+//                        Marker marker = mMap.addMarker( new MarkerOptions()
+//                                .position(location)
+//                                .title(title)
+//                                .icon(BitmapDescriptorFactory.defaultMarker()));
+//                        markers.add(marker);
                     }
                 }
             }
@@ -269,6 +302,8 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
             mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
             mMap.addMarker(new MarkerOptions().position(userLocation).title(getResources().getString(R.string.your_location)));
+            edit_text_lat.setText(String.valueOf(userLocation.latitude));
+            edit_text_lon.setText(String.valueOf(userLocation.longitude));
         }
     }
 
