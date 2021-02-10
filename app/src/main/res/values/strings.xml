@@ -58,4 +58,12 @@
     <string name="delete_all_favourites">удалить все избранное</string>
     <string name="favourite_cities">Избранные города</string>
     <string name="map">карта</string>
+    <string name="empty_favourites">В избранном пусто</string>
+
+    <string name="unknown_action">Не распознано</string>
+    <string name="power_connected">идет заряд</string>
+    <string name="power_disconnected">заряд отключен</string>
+    <string name="purchase">Покупка</string>
+    <string name="purchase_request">Необходимо купить версию pro. Согласны?</string>
+    <string name="deny">Не хочу</string>
 </resources>

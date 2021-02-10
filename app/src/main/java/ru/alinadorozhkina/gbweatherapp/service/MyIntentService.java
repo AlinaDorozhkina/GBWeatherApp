@@ -15,11 +15,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 import ru.alinadorozhkina.gbweatherapp.current.weather.entities.WeatherRequest;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
+import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 import ru.alinadorozhkina.gbweatherapp.utils.JSONUtils;
 
 public class MyIntentService extends IntentService {

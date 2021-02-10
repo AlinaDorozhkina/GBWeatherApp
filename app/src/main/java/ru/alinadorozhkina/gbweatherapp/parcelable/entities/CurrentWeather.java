@@ -22,25 +22,25 @@ public class CurrentWeather implements Parcelable {
         this.temperature = temperature;
         this.description = description;
         this.icon = icon;
-        this.wind=wind;
-        this.pressure=pressure;
-        this.humidity=humidity;
-        this.lat=lat;
-        this.lon=lon;
-        this.weekWeathersList=weekWeathersList;
+        this.wind = wind;
+        this.pressure = pressure;
+        this.humidity = humidity;
+        this.lat = lat;
+        this.lon = lon;
+        this.weekWeathersList = weekWeathersList;
     }
 
     protected CurrentWeather(Parcel in) {
-        cityName=in.readString();
-        temperature=in.readDouble();
-        description=in.readString();
-        icon=in.readString();
-        wind=in.readInt();
-        pressure=in.readInt();
-        humidity=in.readInt();
-        lat =in.readDouble();
-        lon=in.readDouble();
-        weekWeathersList=in.readArrayList(null);
+        cityName = in.readString();
+        temperature = in.readDouble();
+        description = in.readString();
+        icon = in.readString();
+        wind = in.readInt();
+        pressure = in.readInt();
+        humidity = in.readInt();
+        lat = in.readDouble();
+        lon = in.readDouble();
+        weekWeathersList = in.readArrayList(null);
     }
 
     public static final Creator<CurrentWeather> CREATOR = new Creator<CurrentWeather>() {

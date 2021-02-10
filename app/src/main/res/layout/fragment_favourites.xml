@@ -35,7 +35,6 @@
         android:layout_gravity="end"
         android:elevation="@dimen/margin_small"
         android:src="@drawable/ic_baseline_delete_24"
-        android:background="@drawable/circle"
         android:contentDescription="@string/delete_all_favourites" />
 
 </LinearLayout>

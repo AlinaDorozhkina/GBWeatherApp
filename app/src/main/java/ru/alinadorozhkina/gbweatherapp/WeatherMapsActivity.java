@@ -16,9 +16,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -48,7 +48,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
@@ -57,11 +56,12 @@ import ru.alinadorozhkina.gbweatherapp.helper.Keys;
 import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 
 public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private GoogleMap mMap;
+    private GoogleMap googleMap;
     private Marker marker;
 
     private static final int CHECK_SETTINGS_CODE = 111;
     private static final int REQUEST_LOCATION_PERMISSION = 222;
+    private static final String TAG = WeatherMapsActivity.class.getSimpleName();
 
     private FavViewModel viewModel;
 
@@ -73,15 +73,15 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
     private Location currentLocation;
 
     private boolean isLocationUpdatesActive;
-    private EditText edit_text_lat;
-    private EditText edit_text_lon;
+    private EditText textLat;
+    private EditText textLon;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getBoolean("theme", true)) {
+        if (sp.getBoolean(Keys.THEME, true)) {
             setTheme(R.style.AppDarkTheme);
         }
         setContentView(R.layout.activity_weather_maps);
@@ -95,16 +95,16 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
 
     private void initView() {
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(App.getInstance()).create(FavViewModel.class);
-        edit_text_lat = findViewById(R.id.edit_text_lat);
-        edit_text_lon = findViewById(R.id.edit_text_lon);
+        textLat = findViewById(R.id.edit_text_lat);
+        textLon = findViewById(R.id.edit_text_lon);
         MaterialButton check_weather_button = findViewById(R.id.check_weather_button);
         check_weather_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (edit_text_lat.getText().length() > 0 && edit_text_lon.getText().length() > 0) {
+                if (textLat.getText().length() > 0 && textLon.getText().length() > 0) {
                     Intent intent = new Intent(WeatherMapsActivity.this, WeatherDescription.class);
-                    intent.putExtra(Keys.LAT, Double.parseDouble(edit_text_lat.getText().toString()));
-                    intent.putExtra(Keys.LON, Double.parseDouble(edit_text_lon.getText().toString()));
+                    intent.putExtra(Keys.LAT, Double.parseDouble(textLat.getText().toString()));
+                    intent.putExtra(Keys.LON, Double.parseDouble(textLon.getText().toString()));
                     startActivity(intent);
                 } else {
                     Toast.makeText(WeatherMapsActivity.this, getResources().getString(R.string.enter_coordinates),
@@ -129,8 +129,15 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
 
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbarWeatherMap);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_home_24);
         setActionBar(toolbar);
+        getActionBar().setDisplayShowHomeEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bottom_app_bar, menu);
+        return true;
     }
 
     @Override
@@ -144,27 +151,20 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
     }
 
 
-
     private void addFavouritesCitiesOnMap() {
-        List<Marker> markers = new ArrayList<Marker>();
         viewModel.getAllFavourites().observe(this, new Observer<List<Favourites>>() {
             @Override
             public void onChanged(List<Favourites> favourites) {
                 if (favourites != null) {
-                    Log.v("WEATHERMAPACTIVITY"," размер "+ favourites.size());
+                    Log.v(TAG, " размер " + favourites.size());
                     for (int i = 0; i < favourites.size(); i++) {
                         String title = favourites.get(i).getCityName();
                         LatLng location = new LatLng(favourites.get(i).getLat(), favourites.get(i).getLon());
-                        Log.v("WEATHERMAPACTIVITY", " координаты "+ location.latitude + location.longitude);
-                        mMap.addMarker(new MarkerOptions()
+                        Log.v(TAG, " координаты " + location.latitude + location.longitude);
+                        googleMap.addMarker(new MarkerOptions()
                                 .position(location)
                                 .title(title)
                                 .icon(BitmapDescriptorFactory.defaultMarker()));
-//                        Marker marker = mMap.addMarker( new MarkerOptions()
-//                                .position(location)
-//                                .title(title)
-//                                .icon(BitmapDescriptorFactory.defaultMarker()));
-//                        markers.add(marker);
                     }
                 }
             }
@@ -172,15 +172,15 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
         if (currentLocation != null) {
             LatLng userLocation = new LatLng(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(userLocation).title(getResources().getString(R.string.your_location)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+            googleMap.addMarker(new MarkerOptions().position(userLocation).title(getResources().getString(R.string.your_location)));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
         }
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
                 addMarker(latLng);
@@ -192,13 +192,12 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
         if (marker != null) {
             marker.remove();
         }
-        marker = mMap.addMarker(new MarkerOptions()
+        marker = googleMap.addMarker(new MarkerOptions()
                 .position(location)
                 .icon(BitmapDescriptorFactory.defaultMarker()));
-        edit_text_lat.setText(String.valueOf(location.latitude));
-        edit_text_lon.setText(String.valueOf(location.longitude));
+        textLat.setText(String.valueOf(location.latitude));
+        textLon.setText(String.valueOf(location.longitude));
     }
-
 
     private void startLocationUpdates() {
         isLocationUpdatesActive = true;
@@ -218,13 +217,6 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
                                                         Manifest.permission
                                                                 .ACCESS_COARSE_LOCATION) !=
                                                 PackageManager.PERMISSION_GRANTED) {
-                                    // TODO: Consider calling
-                                    //    ActivityCompat#requestPermissions
-                                    // here to request the missing permissions, and then overriding
-                                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                    //                                          int[] grantResults)
-                                    // to handle the case where the user grants the permission. See the documentation
-                                    // for ActivityCompat#requestPermissions for more details.
                                     return;
                                 }
                                 fusedLocationClient.requestLocationUpdates(
@@ -299,11 +291,11 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
         if (currentLocation != null) {
             LatLng userLocation = new LatLng(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
-            mMap.addMarker(new MarkerOptions().position(userLocation).title(getResources().getString(R.string.your_location)));
-            edit_text_lat.setText(String.valueOf(userLocation.latitude));
-            edit_text_lon.setText(String.valueOf(userLocation.longitude));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+            googleMap.addMarker(new MarkerOptions().position(userLocation).title(getResources().getString(R.string.your_location)));
+            textLat.setText(String.valueOf(userLocation.latitude));
+            textLon.setText(String.valueOf(userLocation.longitude));
         }
     }
 
@@ -347,14 +339,13 @@ public class WeatherMapsActivity extends FragmentActivity implements OnMapReadyC
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length <= 0) {
-                Log.d("onRequestPermissions",
+                Log.d(TAG,
                         "Request was cancelled");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (isLocationUpdatesActive) {
                     startLocationUpdates();
                 }
             }
-
         }
     }
 

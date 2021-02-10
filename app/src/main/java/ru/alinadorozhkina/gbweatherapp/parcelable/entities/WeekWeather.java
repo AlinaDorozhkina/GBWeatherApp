@@ -9,7 +9,7 @@ public class WeekWeather implements Parcelable {
     private double temp;
     private String icon;
 
-    public WeekWeather(){
+    public WeekWeather() {
 
     }
 

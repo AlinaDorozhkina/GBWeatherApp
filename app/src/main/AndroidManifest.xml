@@ -52,6 +52,7 @@
         </receiver>
 
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".screens.weather.WeatherDescription" />
         <activity
             android:name=".SplashActivity"
             android:noHistory="true"
@@ -67,7 +68,6 @@
             android:name=".service.MyIntentService"
             android:exported="false" />
 
-        <activity android:name=".screens.weather.WeatherDescription" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
