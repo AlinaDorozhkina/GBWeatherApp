@@ -41,6 +41,64 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036399124788:android:7d4a6d6e8c4c5c26ee4561",
+        "android_client_info": {
+          "package_name": "ru.alinadorozhkina.gbweatherapp.free"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036399124788-s5rcvbeoadulb1h6ddheblc6ori9nj2k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc6iJ71riGfST0fCBUqe9_eyCfVceEE6A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1036399124788-s5rcvbeoadulb1h6ddheblc6ori9nj2k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036399124788:android:245cccabe7ae0e41ee4561",
+        "android_client_info": {
+          "package_name": "ru.alinadorozhkina.gbweatherapp.pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036399124788-s5rcvbeoadulb1h6ddheblc6ori9nj2k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc6iJ71riGfST0fCBUqe9_eyCfVceEE6A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1036399124788-s5rcvbeoadulb1h6ddheblc6ori9nj2k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

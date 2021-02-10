@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/go_to_map"
+            android:title="@string/go_to_map"
+            android:icon="@drawable/ic_baseline_map_24"
+            android:enabled="false"
+            />
+
+        <item
+            android:id="@+id/write_to_developer"
+            android:icon="@android:drawable/ic_dialog_email"
+            android:title="@string/write_letter" />
+
+        <item
+            android:id="@+id/about_app"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="@string/about_app" />
+
+    </group>
+
+
+</menu>

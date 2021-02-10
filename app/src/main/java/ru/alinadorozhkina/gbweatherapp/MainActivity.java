@@ -7,11 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -48,11 +44,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-
-import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
-import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
-import ru.alinadorozhkina.gbweatherapp.adapters.FavouritesAdapter;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentAboutApp;
 import ru.alinadorozhkina.gbweatherapp.fragments.FragmentSendingEmail;
 import ru.alinadorozhkina.gbweatherapp.fragments.LoginFragment;
@@ -72,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getBoolean("theme", true)) {
+        if (sp.getBoolean(Keys.THEME, true)) {
             setTheme(R.style.AppDarkTheme);
         }
         setContentView(R.layout.activity_main);
@@ -93,11 +84,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.w("TAG", "getInstanceId failed", task.getException());
                             return;
                         }
-
-                        // Получить токен
                         String token = task.getResult().getToken();
                         Log.v(TAG, "токен "+ token);
-                        // Сохранить токен...
                     }
                 });
     }
@@ -235,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected ArrayList<String> doInBackground(String... strings) {
             ArrayList<String> cities = new ArrayList<>();
-            JsonReader jsonReader = null;
+            JsonReader jsonReader;
             try {
                 InputStream is = context.getAssets().open(strings[0]);
                 InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);

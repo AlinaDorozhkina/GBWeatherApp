@@ -9,5 +9,5 @@
 
     <stroke
         android:width="12dp"
-        android:color="#009faf" />
+        android:color="?attr/colorSecondaryVariant" />
 </shape>

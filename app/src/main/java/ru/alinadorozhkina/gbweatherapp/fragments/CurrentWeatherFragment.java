@@ -11,14 +11,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -26,8 +22,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import ru.alinadorozhkina.gbweatherapp.App;
-import ru.alinadorozhkina.gbweatherapp.DB.FavViewModel;
 import ru.alinadorozhkina.gbweatherapp.DB.Favourites;
 import ru.alinadorozhkina.gbweatherapp.adapters.WeekTempAdapter;
 import ru.alinadorozhkina.gbweatherapp.helper.Keys;
@@ -36,7 +30,6 @@ import ru.alinadorozhkina.gbweatherapp.interfaces.OnActivityFavouritesAddingList
 import ru.alinadorozhkina.gbweatherapp.interfaces.OnFragmentFavouritesListener;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.CurrentWeather;
 import ru.alinadorozhkina.gbweatherapp.parcelable.entities.WeekWeather;
-import ru.alinadorozhkina.gbweatherapp.screens.weather.WeatherDescription;
 
 
 public class CurrentWeatherFragment extends Fragment implements OnActivityFavouritesAddingListener {
@@ -62,7 +55,7 @@ public class CurrentWeatherFragment extends Fragment implements OnActivityFavour
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layout = inflater.inflate(R.layout.test2, container, false);
+        layout = inflater.inflate(R.layout.layout_weather_current, container, false);
         initView(layout);
         return layout;
     }
